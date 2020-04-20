@@ -7,13 +7,13 @@ const sass = require("gulp-sass");
 const autoprefixer = require("gulp-autoprefixer");
 const mode = require("gulp-mode")();
 const csscomb = require("gulp-csscomb");
-const babel = require('gulp-babel');
-const rename = require('gulp-rename');
+const babel = require("gulp-babel");
+const rename = require("gulp-rename");
 
 // File paths
 const files = {
   scssPath: "scss/*.scss",
-  jsPath: "js/**/*.js"
+  jsPath: "js/**/*.js",
 };
 
 // Sass task: compiles the style.scss file into style.css
@@ -29,36 +29,36 @@ function scssTask() {
 }
 
 // Helper function for renaming files
-const bundleName = (file) => {
-  file.basename = file.basename.replace('.es6', '');
-  file.extname = '.js';
-  return file;
- };
+// const bundleName = (file) => {
+//   file.basename = file.basename.replace('.es6', '');
+//   file.extname = '.js';
+//   return file;
+//  };
 
 // JS Task: Lint and Uglify the JS files and process them.
-function jsTask() {
-  return src([files.jsPath])
-    .pipe(babel({
-      presets: [['env', {
-        modules: false,
-        useBuiltIns: true,
-        targets: { browsers: ["last 2 versions", "> 1%"] },
-      }]],
-    }))
-    .pipe(rename(file => (bundleName(file))))
-    .pipe(dest("dist/js"));
-}
+// function jsTask() {
+//   return src([files.jsPath])
+//     .pipe(babel({
+//       presets: [['env', {
+//         modules: false,
+//         useBuiltIns: true,
+//         targets: { browsers: ["last 2 versions", "> 1%"] },
+//       }]],
+//     }))
+//     .pipe(rename(file => (bundleName(file))))
+//     .pipe(dest("dist/js"));
+// }
 
 // Watch task: watch SCSS and JS files for changes
 // If any change, run scss and js tasks simultaneously
 function watchTask() {
-  watch([files.scssPath, files.jsPath], series(parallel(scssTask, jsTask)));
+  watch([files.scssPath], series(parallel(scssTask)));
 }
 
 // Export a build Gulp task to create a deployment build.
-exports.build = series(scssTask, jsTask);
+exports.build = series(scssTask);
 
 // Export the default Gulp task so it can be run
 // Runs the scss and js tasks simultaneously
 // then runs cacheBust, then watch task
-exports.default = series(parallel(scssTask, jsTask), watchTask);
+exports.default = series(parallel(scssTask), watchTask);
